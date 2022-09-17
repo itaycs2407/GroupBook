@@ -1,7 +1,11 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
+  /* eslint-disable no-undef */
+  // const tabs = chrome.tabGroups;
+  // console.log(tabs);
+
   return (
     <div className="App">
       <header className="App-header">
