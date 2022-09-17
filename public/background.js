@@ -29,19 +29,16 @@ const getGroupsData = () => {
 };
 
 const convertGroupToBookmark = (groupTitle, tabs) => {
-  chrome.bookmarks.create(
-    { parentId: "1", title: groupTitle },
-     (newFolder) => {
-      const newFolderId = newFolder.id;
-      tabs.forEach((tab) => {
-        chrome.bookmarks.create({
-          parentId: newFolderId,
-          title: tab.title,
-          url: tab.url,
-        });
+  chrome.bookmarks.create({ parentId: "1", title: groupTitle }, (newFolder) => {
+    const { id: newFolderId } = newFolder;
+    tabs.forEach((tab) => {
+      chrome.bookmarks.create({
+        parentId: newFolderId,
+        title: tab.title,
+        url: tab.url,
       });
-    }
-  );
+    });
+  });
 };
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {

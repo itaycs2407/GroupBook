@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Groups from "./components/groups";
 import "./App.css";
 
-function App() {
+const App = () => {
   const [groups, setGroups] = useState(null);
   const [selectedGroupIndex, setSelectedGroupIndex] = useState(-1);
 
@@ -13,7 +13,6 @@ function App() {
     });
 
   const handleConvert = () => {
-    const groupId = groups[selectedGroupIndex].id;
     chrome.runtime.sendMessage(
       {
         type: "converGroup",
@@ -22,30 +21,30 @@ function App() {
       },
       () => {}
     );
+    setSelectedGroupIndex(-1);
   };
 
   useEffect(() => {
     getGroups();
   }, []);
 
-  console.log(selectedGroupIndex);
   return (
     <div className="App">
-      <header className="App-header">
-        <Groups
-          groups={groups}
-          selectedGroup={selectedGroupIndex}
-          setSelectedGroup={setSelectedGroupIndex}
-        />
-        {selectedGroupIndex !== -1 && (
-          <>
-            <div>{`The selcted group is ${groups[selectedGroupIndex].title}`}</div>
-            <button onClick={handleConvert}>Convert</button>
-          </>
-        )}
-      </header>
+      <Groups
+        groups={groups}
+        selectedGroup={selectedGroupIndex}
+        setSelectedGroup={setSelectedGroupIndex}
+      />
+      {selectedGroupIndex !== -1 && (
+        <>
+          <div>{`The selcted group is ${groups[selectedGroupIndex].title}`}</div>
+        </>
+      )}
+      <button onClick={handleConvert} disabled={selectedGroupIndex === -1}>
+        Convert
+      </button>
     </div>
   );
-}
+};
 
 export default App;
