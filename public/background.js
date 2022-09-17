@@ -23,37 +23,67 @@ chrome.tabs.query({}, function (tabs) {
 
   console.log(groupsData);
 
-  // groupsData.forEach((group) => {
-  //   chrome.bookmarks.create(
-  //     { parentId: "1", title: group.title },
-  //     function (newFolder) {
-  //       console.log(newFolder.id, group);
-  //       console.log("added folder: " + newFolder.title + newFolder.id);
-  //     }
-  //   );
-  // });
+  const mock = [
+    {
+      collapsed: true,
+      color: "purple",
+      id: 1553868745,
+      title: "test12",
+      windowId: 281838957,
+      tabsInCurrentGroup: [
+        {
+          url: "chrome://extensions/",
+          title: "Extensions",
+        },
+        {
+          url: "https://developer.chrome.com/docs/extensions/reference/tabs/",
+          title: "chrome.tabs - Chrome Developers",
+        },
+        {
+          url: "https://developer.chrome.com/docs/extensions/reference/tabGroups/#type-TabGroup",
+          title: "chrome.tabGroups - Chrome Developers",
+        },
+        {
+          url: "chrome://version/",
+          title: "About Version",
+        },
+      ],
+    },
+    {
+      collapsed: true,
+      color: "grey",
+      id: 789379518,
+      title: "qwsw",
+      windowId: 281838957,
+      tabsInCurrentGroup: [
+        {
+          url: "https://developer.chrome.com/docs/extensions/reference/tabGroups/#type-TabGroup",
+          title: "chrome.tabGroups - Chrome Developers",
+        },
+        {
+          url: "https://developer.chrome.com/docs/extensions/reference/tabGroups/#type-TabGroup",
+          title: "chrome.tabGroups - Chrome Developers",
+        },
+      ],
+    },
+  ];
 
-  // groupsData.forEach((group) => {
-  //   console.log(group.title);
-  //   chrome.bookmarks
-  //     .create({ parentId: "1", title: group.title })
-  //     .then((newFolder) => {
-  //       const newFolderId = newFolder.id;
-  //       group.tabsInCurrentGroup.forEach((tab) => {
-  //         chrome.bookmarks.update(newFolderId, {
-  //           title: tab.title,
-  //           url: tab.url,
-  //         });
-  //       });
-  //     });
-  // });
+  mock.forEach((group) => {
+    chrome.bookmarks.create(
+      { parentId: "1", title: group.title },
+      function (newFolder) {
+        console.log(newFolder.id, group);
+        console.log("added folder: " + newFolder.title + newFolder.id);
 
-  // console.log(chrome.bookmarks.getTree());
-  // chrome.bookmarks.create(
-  //   { parentId: "1", title: "Extension bookmarks" },
-  //   function (newFolder) {
-  //     console.log("added folder: " + newFolder.title + newFolder.id);
-  //   }
-  // );
-  // // do whatever you want with the tab
+        const newFolderId = newFolder.id;
+        group.tabsInCurrentGroup.forEach((tab) => {
+          chrome.bookmarks.create({
+            parentId: newFolderId,
+            title: tab.title,
+            url: tab.url,
+          });
+        });
+      }
+    );
+  });
 });
