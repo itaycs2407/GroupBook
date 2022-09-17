@@ -1,26 +1,28 @@
-import logo from "./logo.svg";
+/*global chrome*/
+import React, { useState, useEffect, useMemo } from "react";
 import "./App.css";
 
 function App() {
-  /* eslint-disable no-undef */
-  // const tabs = chrome.tabGroups;
-  // console.log(tabs);
+  const [groups, setGroups] = useState(null);
+
+  const getGroups = () =>
+    chrome.runtime.sendMessage({ type: "getGroups" }, (res) => {
+      setGroups(res);
+    });
+
+  useEffect(() => {
+    getGroups();
+  }, []);
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        {groups !== null &&
+          groups.map((dat) => (
+            <div>
+              <p>{`${dat.title} ${dat.tabsInCurrentGroup.length}`}</p>
+            </div>
+          ))}
       </header>
     </div>
   );

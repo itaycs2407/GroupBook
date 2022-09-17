@@ -5,6 +5,7 @@ chrome.tabs.query({}, function (tabs) {
       .map((tabInGroup) => tabInGroup.groupId)
   );
 
+  console.log(groupsId);
   const groupsData = [];
 
   groupsId.forEach((groupId) => {
@@ -68,22 +69,74 @@ chrome.tabs.query({}, function (tabs) {
     },
   ];
 
-  mock.forEach((group) => {
-    chrome.bookmarks.create(
-      { parentId: "1", title: group.title },
-      function (newFolder) {
-        console.log(newFolder.id, group);
-        console.log("added folder: " + newFolder.title + newFolder.id);
+  // mock.forEach((group) => {
+  //   chrome.bookmarks.create(
+  //     { parentId: "1", title: group.title },
+  //     function (newFolder) {
+  //       console.log(newFolder.id, group);
+  //       console.log("added folder: " + newFolder.title + newFolder.id);
 
-        const newFolderId = newFolder.id;
-        group.tabsInCurrentGroup.forEach((tab) => {
-          chrome.bookmarks.create({
-            parentId: newFolderId,
-            title: tab.title,
-            url: tab.url,
-          });
+  //       const newFolderId = newFolder.id;
+  //       group.tabsInCurrentGroup.forEach((tab) => {
+  //         chrome.bookmarks.create({
+  //           parentId: newFolderId,
+  //           title: tab.title,
+  //           url: tab.url,
+  //         });
+  //       });
+  //     }
+  //   );
+  // });
+});
+
+const helper = () => {
+  return new Promise((resolve, reject) => {
+    const groupsData = [];
+
+    chrome.tabs.query({}, function (tabs) {
+      const groupsId = new Set(
+        tabs
+          .filter((tab) => tab.groupId !== -1)
+          .map((tabInGroup) => tabInGroup.groupId)
+      );
+
+      console.log(groupsId);
+
+      groupsId.forEach((groupId) => {
+        chrome.tabs.query({}).then((tabs) => {
+          const tabsInCurrentGroup = tabs
+            .filter((tab) => tab.groupId === groupId)
+            .map((tab) => {
+              return { url: tab.url, title: tab.title };
+            });
+
+          // console.log(tabsInCurrentGroup);
+
+          chrome.tabGroups
+            .get(groupId)
+            .then((data) => groupsData.push({ ...data, tabsInCurrentGroup }));
         });
-      }
-    );
+      });
+
+      console.log(groupsData);
+    });
+
+    resolve(groupsData);
   });
+};
+
+chrome.runtime.onMessage.addListener((msg, sender, response) => {
+  switch (msg.type) {
+    case "getGroups":
+      helper().then((res) => {
+        setTimeout(() => {
+          response(res);
+        }, 100);
+      });
+      return true;
+      break;
+    default:
+      response("unknown request");
+      break;
+  }
 });
