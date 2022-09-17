@@ -31,7 +31,7 @@ const getGroupsData = () => {
 const convertGroupToBookmark = (groupTitle, tabs) => {
   chrome.bookmarks.create(
     { parentId: "1", title: groupTitle },
-    function (newFolder) {
+     (newFolder) => {
       const newFolderId = newFolder.id;
       tabs.forEach((tab) => {
         chrome.bookmarks.create({
