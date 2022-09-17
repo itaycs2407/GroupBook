@@ -125,6 +125,24 @@ const helper = () => {
   });
 };
 
+const convertGroupToBookmark = (groupTitle, tabs) => {
+  console.log("from func", groupTitle, tabs);
+
+  chrome.bookmarks.create(
+    { parentId: "1", title: groupTitle },
+    function (newFolder) {
+      const newFolderId = newFolder.id;
+      tabs.forEach((tab) => {
+        chrome.bookmarks.create({
+          parentId: newFolderId,
+          title: tab.title,
+          url: tab.url,
+        });
+      });
+    }
+  );
+};
+
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
   switch (msg.type) {
     case "getGroups":
@@ -133,6 +151,12 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
           response(res);
         }, 100);
       });
+      return true;
+      break;
+    case "converGroup":
+      setTimeout(() => {
+        convertGroupToBookmark(msg.groupTitle, msg.tabs);
+      }, 100);
       return true;
       break;
     default:
