@@ -9,12 +9,12 @@
   },
   "action": {
     "default_popup": "index.html",
-    "default_title": "Open the popup"
+    "default_title": "Group Book"
   },
 
   "icons": {
-    "16": "logo192.png",
-    "48": "logo192.png",
-    "128": "logo192.png"
+    "16": "book-16-16.png",
+    "48": "book-16-48.png",
+    "128": "book-16-128.png"
   }
 }
